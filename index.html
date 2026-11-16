@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brightside Ripple Advisory | Finance, Fraud, Risk & Business Strategy</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#0A192F',
+                            800: '#112240',
+                            700: '#1D3557',
+                        },
+                        gold: {
+                            500: '#D4AF37',
+                            600: '#B5952F',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-pattern {
+            background-color: #0A192F;
+            background-image: radial-gradient(#1d3557 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-gold-500 selection:text-navy-900">
+
+    <!-- Navigation Bar -->
+    <header class="fixed w-full top-0 z-50 bg-navy-900/95 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Brand Logo -->
+                <a href="#" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gold-500 rounded-lg flex items-center justify-center text-navy-900 font-heading font-extrabold text-xl">
+                        BR
+                    </div>
+                    <div>
+                        <span class="font-heading font-bold text-white text-xl tracking-tight block leading-none">BRIGHTSIDE RIPPLE</span>
+                        <span class="text-xs text-gold-500 tracking-widest uppercase font-medium">Strategic Advisory</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex space-x-8 items-center">
+                    <a href="#services" class="text-slate-300 hover:text-gold-500 text-sm font-medium transition">Practice Areas</a>
+                    <a href="#methodology" class="text-slate-300 hover:text-gold-500 text-sm font-medium transition">Our Approach</a>
+                    <a href="#why-us" class="text-slate-300 hover:text-gold-500 text-sm font-medium transition">Why Choose Us</a>
+                    <a href="#contact" class="bg-gold-500 hover:bg-gold-600 text-navy-900 font-semibold px-5 py-2.5 rounded-md text-sm transition shadow-lg">
+                        Book a Consultation
+                    </a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-slate-300 hover:text-white focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-navy-800 border-b border-slate-700 px-4 pt-2 pb-6 space-y-3">
+            <a href="#services" class="block text-slate-300 hover:text-gold-500 py-2 text-base font-medium">Practice Areas</a>
+            <a href="#methodology" class="block text-slate-300 hover:text-gold-500 py-2 text-base font-medium">Our Approach</a>
+            <a href="#why-us" class="block text-slate-300 hover:text-gold-500 py-2 text-base font-medium">Why Choose Us</a>
+            <a href="#contact" class="block bg-gold-500 text-navy-900 font-semibold text-center py-2.5 rounded-md mt-2">
+                Book a Consultation
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-pattern pt-32 pb-20 lg:pt-44 lg:pb-32 text-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-3xl">
+                <div class="inline-flex items-center space-x-2 bg-navy-800 border border-slate-700 rounded-full px-4 py-1.5 mb-6">
+                    <span class="w-2 h-2 rounded-full bg-gold-500"></span>
+                    <span class="text-xs font-medium text-slate-300 tracking-wide uppercase">Corporate Governance • Financial Integrity • Growth</span>
+                </div>
+                <h1 class="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight mb-6">
+                    Safeguarding Value. <br>
+                    <span class="text-gold-500">Engineering Sustainable Growth.</span>
+                </h1>
+                <p class="text-lg sm:text-xl text-slate-300 mb-10 leading-relaxed max-w-2xl">
+                    We partner with boards, executives, and high-growth enterprises to eliminate structural fraud vulnerabilities, optimize financial architecture, mitigate operational risks, and accelerate market expansion.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#contact" class="bg-gold-500 hover:bg-gold-600 text-navy-900 font-bold px-8 py-4 rounded-md text-center transition shadow-xl">
+                        Schedule Executive Briefing
+                    </a>
+                    <a href="#services" class="border border-slate-600 hover:border-white text-white font-semibold px-8 py-4 rounded-md text-center transition">
+                        Explore Advisory Services
+                    </a>
+                </div>
+            </div>
+
+            <!-- Key Metrics Strip -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20 pt-10 border-t border-slate-800">
+                <div>
+                    <p class="font-heading text-3xl font-bold text-gold-500">100%</p>
+                    <p class="text-sm text-slate-400 mt-1">Confidential Forensic Discretion</p>
+                </div>
+                <div>
+                    <p class="font-heading text-3xl font-bold text-white">360°</p>
+                    <p class="text-sm text-slate-400 mt-1">Enterprise Risk & Control Audits</p>
+                </div>
+                <div>
+                    <p class="font-heading text-3xl font-bold text-white">ROI-Driven</p>
+                    <p class="text-sm text-slate-400 mt-1">Capital & Financial Restructuring</p>
+                </div>
+                <div>
+                    <p class="font-heading text-3xl font-bold text-white">C-Suite</p>
+                    <p class="text-sm text-slate-400 mt-1">Board & Leadership Advisory</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Practice Areas (Services) -->
+    <section id="services" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-gold-600 font-bold tracking-wider uppercase text-sm">Our Expertise</span>
+                <h2 class="font-heading text-3xl sm:text-4xl font-bold text-navy-900 mt-2 mb-4">Core Advisory & Consultancy Pillars</h2>
+                <p class="text-slate-600 text-lg">
+                    Integrated solutions designed to protect your balance sheet while positioning your enterprise for scalable, resilient growth.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Service 1: Finance Consultancy -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-8 hover:shadow-xl transition duration-300 group">
+                    <div class="w-14 h-14 bg-navy-900 text-gold-500 rounded-lg flex items-center justify-center text-2xl mb-6 group-hover:scale-105 transition">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold text-navy-900 mb-3">Finance Consultancy & Strategy</h3>
+                    <p class="text-slate-600 mb-6 leading-relaxed">
+                        Transform financial data into decisive executive action. We help organizations optimize cash flow, restructure capital, and build investor-ready financial models.
+                    </p>
+                    <ul class="space-y-2.5 text-sm text-slate-700 mb-6">
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Fractional CFO & Strategic Financial Planning</li>
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Cash Flow Optimization & Working Capital Management</li>
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Financial Modeling, Valuation & Capital Raising Support</li>
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Corporate Financial Literacy & Executive Workshops</li>
+                    </ul>
+                    <a href="#contact" onclick="selectService('Finance Consultancy')" class="inline-flex items-center text-navy-900 font-semibold hover:text-gold-600 transition">
+                        Request Finance Consultation <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Service 2: Fraud Consulting -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-8 hover:shadow-xl transition duration-300 group">
+                    <div class="w-14 h-14 bg-navy-900 text-gold-500 rounded-lg flex items-center justify-center text-2xl mb-6 group-hover:scale-105 transition">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold text-navy-900 mb-3">Fraud Examination & Deterrence</h3>
+                    <p class="text-slate-600 mb-6 leading-relaxed">
+                        Move beyond reactive detection to proactive deterrence. We uncover occupational fraud, close internal control loopholes, and build fraud-resilient corporate cultures.
+                    </p>
+                    <ul class="space-y-2.5 text-sm text-slate-700 mb-6">
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Forensic Fraud Investigations & Asset Tracing</li>
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Anti-Fraud Framework Design & Internal Control Audits</li>
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Whistleblower Policy & Ethics Governance Setup</li>
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Procurement, Payroll & Vendor Fraud Vulnerability Reviews</li>
+                    </ul>
+                    <a href="#contact" onclick="selectService('Fraud Consulting & Investigation')" class="inline-flex items-center text-navy-900 font-semibold hover:text-gold-600 transition">
+                        Request Confidential Fraud Review <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Service 3: Risk Advisory -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-8 hover:shadow-xl transition duration-300 group">
+                    <div class="w-14 h-14 bg-navy-900 text-gold-500 rounded-lg flex items-center justify-center text-2xl mb-6 group-hover:scale-105 transition">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold text-navy-900 mb-3">Enterprise Risk & Governance</h3>
+                    <p class="text-slate-600 mb-6 leading-relaxed">
+                        Navigate regulatory complexity and operational uncertainty with confidence. We identify structural blind spots before they escalate into reputational or financial crises.
+                    </p>
+                    <ul class="space-y-2.5 text-sm text-slate-700 mb-6">
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Enterprise Risk Management (ERM) Assessments</li>
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Regulatory Compliance & AML/CFT Advisory</li>
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Board Governance & Executive Accountability Frameworks</li>
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Third-Party & Supply Chain Due Diligence</li>
+                    </ul>
+                    <a href="#contact" onclick="selectService('Risk & Governance Advisory')" class="inline-flex items-center text-navy-900 font-semibold hover:text-gold-600 transition">
+                        Assess Your Risk Posture <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Service 4: Business Development -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-8 hover:shadow-xl transition duration-300 group">
+                    <div class="w-14 h-14 bg-navy-900 text-gold-500 rounded-lg flex items-center justify-center text-2xl mb-6 group-hover:scale-105 transition">
+                        <i class="fas fa-chess-knight"></i>
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold text-navy-900 mb-3">Business Development & Scaling</h3>
+                    <p class="text-slate-600 mb-6 leading-relaxed">
+                        Bridge the gap between strategy and revenue execution. We design market-entry blueprints, optimize commercial pipelines, and unlock strategic partnerships.
+                    </p>
+                    <ul class="space-y-2.5 text-sm text-slate-700 mb-6">
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Go-To-Market (GTM) & Regional Expansion Strategy</li>
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> B2B Revenue Architecture & Commercial Structuring</li>
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Strategic Partnerships & Joint Venture Advisory</li>
+                        <li class="flex items-center"><i class="fas fa-check text-gold-600 mr-2.5"></i> Operational Turnaround & Leadership Alignment</li>
+                    </ul>
+                    <a href="#contact" onclick="selectService('Business Development Strategy')" class="inline-flex items-center text-navy-900 font-semibold hover:text-gold-600 transition">
+                        Accelerate Your Growth <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology Section -->
+    <section id="methodology" class="py-24 bg-navy-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mb-16">
+                <span class="text-gold-500 font-bold tracking-wider uppercase text-sm">How We Work</span>
+                <h2 class="font-heading text-3xl sm:text-4xl font-bold mt-2 mb-4">The Strategic Advisory Process</h2>
+                <p class="text-slate-300 text-lg">
+                    We reject cookie-cutter reports. Every engagement is tailored to your balance sheet, risk appetite, and commercial objectives.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="bg-navy-800 border border-slate-700 p-6 rounded-xl">
+                    <span class="text-gold-500 font-heading font-extrabold text-3xl">01</span>
+                    <h3 class="font-heading text-xl font-bold mt-4 mb-2">Diagnostic Audit</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Deep-dive evaluation of your financial health, internal controls, operational vulnerabilities, and market positioning.
+                    </p>
+                </div>
+
+                <div class="bg-navy-800 border border-slate-700 p-6 rounded-xl">
+                    <span class="text-gold-500 font-heading font-extrabold text-3xl">02</span>
+                    <h3 class="font-heading text-xl font-bold mt-4 mb-2">Strategic Architecture</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Designing bespoke governance frameworks, fraud deterrence controls, financial models, and commercial growth roadmaps.
+                    </p>
+                </div>
+
+                <div class="bg-navy-800 border border-slate-700 p-6 rounded-xl">
+                    <span class="text-gold-500 font-heading font-extrabold text-3xl">03</span>
+                    <h3 class="font-heading text-xl font-bold mt-4 mb-2">Hands-On Execution</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Working alongside your leadership team to deploy controls, restructure processes, and execute high-value deals.
+                    </p>
+                </div>
+
+                <div class="bg-navy-800 border border-slate-700 p-6 rounded-xl">
+                    <span class="text-gold-500 font-heading font-extrabold text-3xl">04</span>
+                    <h3 class="font-heading text-xl font-bold mt-4 mb-2">Resilience & Scale</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Continuous stress-testing, executive training, and governance monitoring to ensure sustainable long-term performance.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section id="why-us" class="py-24 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <span class="text-gold-600 font-bold tracking-wider uppercase text-sm">The Advisory Advantage</span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-navy-900 mt-2 mb-6">
+                        Why Decision-Makers Trust Our Counsel
+                    </h2>
+                    <p class="text-slate-600 text-lg mb-8 leading-relaxed">
+                        Most consultants look at growth and risk in silos. We unite forensic financial rigor with aggressive commercial strategy—ensuring that every dollar you generate is protected from leakage.
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-gold-500/20 text-gold-600 flex items-center justify-center shrink-0 mt-1">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-heading font-bold text-navy-900 text-lg">Absolute Discretion & Integrity</h4>
+                                <p class="text-slate-600 text-sm mt-1">Sensitive investigations, restructuring, and board disputes are handled under strict non-disclosure protocols.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-gold-500/20 text-gold-600 flex items-center justify-center shrink-0 mt-1">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-heading font-bold text-navy-900 text-lg">Deterrence Over Mere Detection</h4>
+                                <p class="text-slate-600 text-sm mt-1">We don't just investigate past losses—we redesign leadership accountability and systems so fraud cannot thrive.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-gold-500/20 text-gold-600 flex items-center justify-center shrink-0 mt-1">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-heading font-bold text-navy-900 text-lg">Commercially Grounded Solutions</h4>
+                                <p class="text-slate-600 text-sm mt-1">Controls should never paralyze business speed. Our frameworks streamline operations while locking down risk.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Executive Quote / Callout Box -->
+                <div class="bg-navy-900 text-white p-10 rounded-2xl shadow-2xl relative">
+                    <i class="fas fa-quote-left text-4xl text-gold-500/30 mb-6 block"></i>
+                    <blockquote class="font-heading text-2xl font-semibold leading-relaxed mb-6">
+                        "An audit catches yesterday's theft. Strategic governance stops tomorrow's—while freeing leadership to focus on profitable expansion."
+                    </blockquote>
+                    <div class="border-t border-slate-700 pt-6 flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-gold-500">Principal Advisory Practice</p>
+                            <p class="text-sm text-slate-400">Finance, Fraud Examination & Risk Strategy</p>
+                        </div>
+                        <a href="#contact" class="bg-gold-500 hover:bg-gold-600 text-navy-900 text-sm font-bold px-4 py-2 rounded transition">
+                            Work With Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Consultation Booking & Contact Section -->
+    <section id="contact" class="py-24 bg-white border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12">
+                <!-- Contact Details -->
+                <div class="lg:col-span-5">
+                    <span class="text-gold-600 font-bold tracking-wider uppercase text-sm">Get In Touch</span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-navy-900 mt-2 mb-4">
+                        Initiate a Confidential Consultation
+                    </h2>
+                    <p class="text-slate-600 mb-8 leading-relaxed">
+                        Whether you are navigating a suspected internal control breach, preparing for capital expansion, or strengthening corporate governance, our advisors are ready to assist.
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-navy-900 text-lg">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-xs text-slate-500 uppercase font-semibold">Direct Advisory Line</p>
+                                <a href="tel:+254700276089" class="text-lg font-bold text-navy-900 hover:text-gold-600">+254 700 276 089</a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-navy-900 text-lg">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-xs text-slate-500 uppercase font-semibold">Instant WhatsApp Briefing</p>
+                                <a href="https://wa.me/254700276089" target="_blank" class="text-lg font-bold text-navy-900 hover:text-gold-600">Chat on WhatsApp</a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-navy-900 text-lg">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-xs text-slate-500 uppercase font-semibold">Corporate Inquiries</p>
+                                <a href="mailto:advisory@brightsideripple.com" class="text-lg font-bold text-navy-900 hover:text-gold-600">advisory@brightsideripple.com</a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-navy-900 text-lg">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-xs text-slate-500 uppercase font-semibold">Headquarters</p>
+                                <p class="text-lg font-bold text-navy-900">Nairobi, Kenya (Serving Regional & Global Clients)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consultation Form -->
+                <div class="lg:col-span-7">
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8 sm:p-10 shadow-lg">
+                        <h3 class="font-heading text-2xl font-bold text-navy-900 mb-6">Request an Advisory Proposal</h3>
+                        
+                        <form id="consultationForm" class="space-y-5">
+                            <div class="grid sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Full Name *</label>
+                                    <input type="text" id="clientName" required placeholder="e.g. Jane Doe" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Organization / Company *</label>
+                                    <input type="text" id="clientCompany" required placeholder="Company Name" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none bg-white">
+                                </div>
+                            </div>
+
+                            <div class="grid sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Work Email *</label>
+                                    <input type="email" id="clientEmail" required placeholder="name@company.com" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Phone Number *</label>
+                                    <input type="tel" id="clientPhone" required placeholder="+254 7XX XXX XXX" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none bg-white">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Primary Area of Interest *</label>
+                                <select id="serviceSelect" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none bg-white">
+                                    <option value="Finance Consultancy">Finance Consultancy & CFO Advisory</option>
+                                    <option value="Fraud Consulting & Investigation">Fraud Examination, Investigation & Deterrence</option>
+                                    <option value="Risk & Governance Advisory">Enterprise Risk Management & Governance</option>
+                                    <option value="Business Development Strategy">Business Development & Market Expansion</option>
+                                    <option value="Corporate Training">Executive & Corporate Training Programs</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Brief Overview of Your Objectives</label>
+                                <textarea id="clientMessage" rows="4" placeholder="Tell us briefly about your organization's challenges or goals..." class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none bg-white"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full bg-navy-900 hover:bg-navy-800 text-gold-500 font-bold py-4 rounded-lg transition shadow-lg text-base">
+                                Submit Confidential Request
+                            </button>
+                        </form>
+
+                        <!-- Confirmation Alert (Hidden by default) -->
+                        <div id="formSuccess" class="hidden mt-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-emerald-600 text-xl mr-3"></i>
+                                <div>
+                                    <h4 class="font-bold">Consultation Request Received</h4>
+                                    <p class="text-sm mt-0.5">Thank you. A senior advisor will review your inquiry and reach out within 24 business hours.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-navy-900 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gold-500 rounded flex items-center justify-center text-navy-900 font-heading font-bold">
+                    BR
+                </div>
+                <span class="font-heading font-bold text-white text-lg">BRIGHTSIDE RIPPLE ADVISORY</span>
+            </div>
+            
+            <p class="text-sm text-center md:text-left">
+                &copy; 2026 Brightside Ripple Advisory. All Rights Reserved. | Finance • Fraud • Risk • Strategy
+            </p>
+
+            <div class="flex space-x-5 text-lg">
+                <a href="#" class="hover:text-gold-500 transition" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="hover:text-gold-500 transition" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+                <a href="https://wa.me/254700276089" target="_blank" class="hover:text-gold-500 transition" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive JavaScript -->
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Auto-select service in dropdown when clicking a service card link
+        function selectService(serviceName) {
+            const selectElement = document.getElementById('serviceSelect');
+            selectElement.value = serviceName;
+        }
+
+        // Handle Form Submission (Frontend simulation + WhatsApp quick option)
+        const consultationForm = document.getElementById('consultationForm');
+        const formSuccess = document.getElementById('formSuccess');
+
+        consultationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('clientName').value;
+            const company = document.getElementById('clientCompany').value;
+            const service = document.getElementById('serviceSelect').value;
+
+            // Show confirmation message on page
+            formSuccess.classList.remove('hidden');
+            consultationForm.reset();
+
+            // Optional: Uncomment the line below if you want the form to also open WhatsApp with the client's inquiry
+            // window.open(`https://wa.me/254700276089?text=Hello,%20my%20name%20is%20${encodeURIComponent(name)}%20from%20${encodeURIComponent(company)}.%20I%20would%20like%20to%20inquire%20about%20${encodeURIComponent(service)}.`, '_blank');
+        });
+    </script>
+</body>
+</html>

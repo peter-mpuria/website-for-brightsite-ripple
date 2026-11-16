@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brightside Ripple | FinCrime & Compliance Command Center (React)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for in-browser JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            950: '#060F1E',
+                            900: '#0A192F',
+                            800: '#112240',
+                            700: '#1D3557',
+                        },
+                        gold: {
+                            500: '#D4AF37',
+                            600: '#B5952F',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // --- MOCK ENTERPRISE DATA ---
+        const initialKycQueue = [
+            { id: 'KYC-8841', name: 'Savannah Logistics Ltd', type: 'KYB Corporate', country: 'Kenya', pep: 'Clear', score: 24, risk: 'LOW', status: 'Verified' },
+            { id: 'KYC-8842', name: 'Marcus Odhiambo', type: 'Individual', country: 'Kenya', pep: 'Clear', score: 48, risk: 'MEDIUM', status: 'Pending EDD' },
+            { id: 'KYC-8843', name: 'Aurelia Holdings FZE', type: 'KYB Corporate', country: 'UAE', pep: 'Match (Director)', score: 86, risk: 'HIGH', status: 'Escalated' },
+            { id: 'KYC-8844', name: 'Grace Mutua', type: 'Individual', country: 'Uganda', pep: 'Clear', score: 19, risk: 'LOW', status: 'Verified' },
+        ];
+
+        const initialTransactions = [
+            { id: 'TXN-99201', entity: 'Aurelia Holdings FZE', amount: 'KES 14,500,000', channel: 'SWIFT Wire', rule: 'Cross-Border High Risk', score: 91, action: 'BLOCKED', time: '2 mins ago' },
+            { id: 'TXN-99202', entity: 'Marcus Odhiambo', amount: 'KES 985,000', channel: 'RTGS', rule: 'Structuring (<1M Threshold)', score: 78, action: 'FLAGGED', time: '9 mins ago' },
+            { id: 'TXN-99203', entity: 'Savannah Logistics Ltd', amount: 'KES 2,340,000', channel: 'EFT', rule: 'Normal Baseline', score: 15, action: 'CLEARED', time: '14 mins ago' },
+            { id: 'TXN-99204', entity: 'Kibo Merchants Co.', amount: 'KES 4,120,000', channel: 'Mobile Bulk', rule: 'Velocity Spike (12 tx/hr)', score: 83, action: 'FLAGGED', time: '27 mins ago' },
+            { id: 'TXN-99205', entity: 'Grace Mutua', amount: 'KES 85,000', channel: 'PesaLink', rule: 'Normal Baseline', score: 11, action: 'CLEARED', time: '41 mins ago' },
+        ];
+
+        const initialCases = [
+            { id: 'CASE-2026-0419', subject: 'Aurelia Holdings FZE', trigger: 'PEP Director + High-Value Wire', priority: 'CRITICAL', analyst: 'J. Kariuki', sla: '4h left', status: 'Under Investigation', notes: 'Requested beneficial ownership registry extract and source of wealth documentation.' },
+            { id: 'CASE-2026-0418', subject: 'Marcus Odhiambo', trigger: 'Repeated Sub-1M KES Deposits', priority: 'HIGH', analyst: 'A. Wanjiku', sla: '11h left', status: 'Pending MLRO Review', notes: '4 consecutive RTGS credits between KES 950k and 990k within 48 hours.' },
+            { id: 'CASE-2026-0415', subject: 'Kibo Merchants Co.', trigger: 'Unusual Merchant Velocity', priority: 'MEDIUM', analyst: 'D. Otieno', sla: '22h left', status: 'Open', notes: 'Merchant turnover jumped 340% above 90-day peer average.' },
+        ];
+
+        const initialReports = [
+            { id: 'STR-2026-1115-09', type: 'Suspicious Transaction Report (STR)', subject: 'Aurelia Holdings FZE', regulator: 'FRC Kenya (goAML)', format: 'XML v5.0', status: 'Ready for Filing', date: '2026-11-15' },
+            { id: 'CTR-2026-1114-42', type: 'Cash Transaction Report (CTR)', subject: 'Batch Consolidation (18 Txns)', regulator: 'FRC Kenya (goAML)', format: 'XML v5.0', status: 'Submitted', date: '2026-11-14' },
+            { id: 'STR-2026-1110-04', type: 'Suspicious Transaction Report (STR)', subject: 'Nexus Trading Ltd', regulator: 'FRC Kenya (goAML)', format: 'XML v5.0', status: 'Acknowledged', date: '2026-11-10' },
+        ];
+
+        // --- MAIN REACT APPLICATION ---
+        function App() {
+            const [activeView, setActiveView] = useState('analytics');
+            const [kycList, setKycList] = useState(initialKycQueue);
+            const [txList, setTxList] = useState(initialTransactions);
+            const [txFilter, setTxFilter] = useState('ALL');
+            const [cases, setCases] = useState(initialCases);
+            const [selectedCase, setSelectedCase] = useState(initialCases[0]);
+            const [reports, setReports] = useState(initialReports);
+
+            // KYC Form State
+            const [newApplicant, setNewApplicant] = useState({ name: '', type: 'Individual', country: 'Kenya', amount: '' });
+
+            const handleKycSubmit = (e) => {
+                e.preventDefault();
+                if (!newApplicant.name) return;
+                const isHighRisk = newApplicant.country !== 'Kenya' || Number(newApplicant.amount) > 5000000;
+                const score = isHighRisk ? 82 : 22;
+                const entry = {
+                    id: `KYC-${Math.floor(1000 + Math.random() * 9000)}`,
+                    name: newApplicant.name,
+                    type: newApplicant.type,
+                    country: newApplicant.country,
+                    pep: isHighRisk ? 'Review Flag' : 'Clear',
+                    score,
+                    risk: isHighRisk ? 'HIGH' : 'LOW',
+                    status: isHighRisk ? 'Pending EDD' : 'Verified'
+                };
+                setKycList([entry, ...kycList]);
+                setNewApplicant({ name: '', type: 'Individual', country: 'Kenya', amount: '' });
+            };
+
+            const updateCaseStatus = (caseId, newStatus) => {
+                const updated = cases.map(c => c.id === caseId ? { ...c, status: newStatus } : c);
+                setCases(updated);
+                if (selectedCase.id === caseId) {
+                    setSelectedCase({ ...selectedCase, status: newStatus });
+                }
+            };
+
+            const submitReport = (reportId) => {
+                setReports(reports.map(r => r.id === reportId ? { ...r, status: 'Submitted' } : r));
+            };
+
+            const navItems = [
+                { id: 'analytics', label: 'Executive Risk Analytics', icon: 'fa-chart-pie' },
+                { id: 'kyc', label: 'Digital KYC & Onboarding', icon: 'fa-id-card-clip' },
+                { id: 'monitoring', label: 'Transaction Monitoring', icon: 'fa-wave-square' },
+                { id: 'cases', label: 'Case Management', icon: 'fa-folder-open' },
+                { id: 'reporting', label: 'Regulatory Reporting', icon: 'fa-file-shield' },
+            ];
+
+            return (
+                <div className="min-h-screen flex flex-col lg:flex-row">
+                    {/* Sidebar Navigation */}
+                    <aside className="w-full lg:w-72 bg-navy-950 text-white flex flex-col justify-between shrink-0">
+                        <div>
+                            {/* Brand */}
+                            <div className="p-6 border-b border-slate-800 flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-gold-500 rounded-lg flex items-center justify-center text-navy-950 font-heading font-extrabold text-xl">
+                                    BR
+                                </div>
+                                <div>
+                                    <span className="font-heading font-bold text-base tracking-tight block leading-none">BRIGHTSIDE RIPPLE</span>
+                                    <span className="text-[11px] text-gold-500 uppercase tracking-widest font-medium">FinCrime Command</span>
+                                </div>
+                            </div>
+
+                            {/* Nav Links */}
+                            <nav className="p-4 space-y-1.5">
+                                {navItems.map(item => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => setActiveView(item.id)}
+                                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition ${
+                                            activeView === item.id
+                                                ? 'bg-gold-500 text-navy-950 font-bold shadow-md'
+                                                : 'text-slate-300 hover:bg-navy-800 hover:text-white'
+                                        }`}
+                                    >
+                                        <i className={`fas ${item.icon} w-5 text-center`}></i>
+                                        <span>{item.label}</span>
+                                    </button>
+                                ))}
+                            </nav>
+                        </div>
+
+                        {/* Sidebar Footer */}
+                        <div className="p-5 border-t border-slate-800 text-xs text-slate-400">
+                            <div className="flex items-center space-x-2 text-emerald-400 mb-1 font-mono">
+                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span>ENGINE v2.4 ONLINE</span>
+                            </div>
+                            <p>MLRO & Risk Governance Portal</p>
+                        </div>
+                    </aside>
+
+                    {/* Main Content Area */}
+                    <main className="flex-1 flex flex-col min-w-0">
+                        {/* Top Bar */}
+                        <header className="bg-white border-b border-slate-200 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+                            <div>
+                                <h1 className="font-heading text-xl font-bold text-navy-900">
+                                    {navItems.find(n => n.id === activeView)?.label}
+                                </h1>
+                                <p className="text-xs text-slate-500">Real-time AML, Fraud Deterrence & Regulatory Intelligence</p>
+                            </div>
+                            <div className="flex items-center space-x-4">
+                                <span className="hidden sm:inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-navy-900 text-gold-500">
+                                    <i className="fas fa-shield-halved mr-1.5"></i> FRC / CBK Compliant
+                                </span>
+                                <div className="w-9 h-9 rounded-full bg-navy-800 text-white flex items-center justify-center font-bold text-xs">
+                                    MLRO
+                                </div>
+                            </div>
+                        </header>
+
+                        {/* Dynamic View Container */}
+                        <div className="p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
+
+                            {/* VIEW 1: EXECUTIVE RISK ANALYTICS */}
+                            {activeView === 'analytics' && (
+                                <div className="space-y-6">
+                                    {/* KPI Cards */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                                        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                            <div className="flex justify-between items-start">
+                                                <span className="text-xs font-semibold uppercase text-slate-500">Enterprise Risk Index</span>
+                                                <span className="px-2 py-0.5 text-xs font-bold rounded bg-amber-100 text-amber-800">MODERATE</span>
+                                            </div>
+                                            <p className="font-heading text-3xl font-extrabold text-navy-900 mt-2">42 / 100</p>
+                                            <p className="text-xs text-emerald-600 mt-1"><i className="fas fa-arrow-down mr-1"></i> 6.4% vs last 30 days</p>
+                                        </div>
+
+                                        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                            <div className="flex justify-between items-start">
+                                                <span className="text-xs font-semibold uppercase text-slate-500">Fraud Losses Prevented</span>
+                                                <i className="fas fa-vault text-gold-600"></i>
+                                            </div>
+                                            <p className="font-heading text-3xl font-extrabold text-navy-900 mt-2">KES 48.2M</p>
+                                            <p className="text-xs text-slate-500 mt-1">19 high-risk wires intercepted</p>
+                                        </div>
+
+                                        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                            <div className="flex justify-between items-start">
+                                                <span className="text-xs font-semibold uppercase text-slate-500">Active AML Alerts</span>
+                                                <i className="fas fa-bell text-rose-600"></i>
+                                            </div>
+                                            <p className="font-heading text-3xl font-extrabold text-navy-900 mt-2">{cases.length}</p>
+                                            <p className="text-xs text-rose-600 mt-1">1 Critical SLA expiring in 4h</p>
+                                        </div>
+
+                                        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                            <div className="flex justify-between items-start">
+                                                <span className="text-xs font-semibold uppercase text-slate-500">KYC Auto-Approval</span>
+                                                <i className="fas fa-user-check text-emerald-600"></i>
+                                            </div>
+                                            <p className="font-heading text-3xl font-extrabold text-navy-900 mt-2">91.4%</p>
+                                            <p className="text-xs text-slate-500 mt-1">Avg verification time: 1.8s</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Risk Distribution & Typology Breakdown */}
+                                    <div className="grid lg:grid-cols-12 gap-6">
+                                        <div className="lg:col-span-7 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                            <h3 className="font-heading font-bold text-navy-900 mb-4">Top Detected Financial Crime Typologies (Q4)</h3>
+                                            <div className="space-y-4">
+                                                {[
+                                                    { label: 'Structuring / Smurfing Below Reporting Threshold', pct: 44, color: 'bg-navy-900' },
+                                                    { label: 'Cross-Border High-Risk Jurisdiction Wires', pct: 28, color: 'bg-gold-500' },
+                                                    { label: 'Account Takeover & Velocity Anomalies', pct: 18, color: 'bg-rose-600' },
+                                                    { label: 'PEP / Adverse Media Ownership Matches', pct: 10, color: 'bg-sky-600' },
+                                                ].map((item, idx) => (
+                                                    <div key={idx}>
+                                                        <div className="flex justify-between text-xs font-semibold mb-1">
+                                                            <span className="text-slate-700">{item.label}</span>
+                                                            <span className="text-navy-900">{item.pct}%</span>
+                                                        </div>
+                                                        <div className="w-full bg-slate-100 rounded-full h-2.5">
+                                                            <div className={`${item.color} h-2.5 rounded-full`} style={{ width: `${item.pct}%` }}></div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="lg:col-span-5 bg-navy-900 text-white p-6 rounded-xl shadow-sm flex flex-col justify-between">
+                                            <div>
+                                                <span className="text-xs font-mono text-gold-500 uppercase">Board Governance Brief</span>
+                                                <h3 className="font-heading text-xl font-bold mt-1 mb-3">Customer Portfolio Risk Tiering</h3>
+                                                <p className="text-xs text-slate-300 leading-relaxed mb-6">
+                                                    Real-time segmentation across 14,280 active retail and corporate accounts under continuous AML monitoring.
+                                                </p>
+                                                <div className="space-y-3 text-sm">
+                                                    <div className="flex justify-between p-3 rounded-lg bg-navy-800">
+                                                        <span>Low Risk (Standard CDD)</span>
+                                                        <span className="font-bold text-emerald-400">84.2%</span>
+                                                    </div>
+                                                    <div className="flex justify-between p-3 rounded-lg bg-navy-800">
+                                                        <span>Medium Risk (Periodic Review)</span>
+                                                        <span className="font-bold text-gold-500">12.5%</span>
+                                                    </div>
+                                                    <div className="flex justify-between p-3 rounded-lg bg-navy-800">
+                                                        <span>High Risk (Enhanced Due Diligence)</span>
+                                                        <span className="font-bold text-rose-400">3.3%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button onClick={() => setActiveView('cases')} className="mt-6 w-full bg-gold-500 hover:bg-gold-600 text-navy-950 font-bold py-2.5 rounded-lg text-xs transition">
+                                                Review High-Risk Escalations
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* VIEW 2: DIGITAL KYC & ONBOARDING */}
+                            {activeView === 'kyc' && (
+                                <div className="grid lg:grid-cols-12 gap-6">
+                                    {/* New Onboarding Simulator */}
+                                    <div className="lg:col-span-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm h-fit">
+                                        <h3 className="font-heading font-bold text-navy-900 mb-1">Run Instant KYC / KYB Check</h3>
+                                        <p className="text-xs text-slate-500 mb-5">Simulate identity verification, sanctions screening & baseline AML scoring.</p>
+                                        <form onSubmit={handleKycSubmit} className="space-y-4">
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name / Entity Name *</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={newApplicant.name}
+                                                    onChange={e => setNewApplicant({ ...newApplicant, name: e.target.value })}
+                                                    placeholder="e.g. Kilimani Traders Ltd"
+                                                    className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm outline-none focus:border-navy-900"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-700 mb-1">Entity Classification</label>
+                                                <select
+                                                    value={newApplicant.type}
+                                                    onChange={e => setNewApplicant({ ...newApplicant, type: e.target.value })}
+                                                    className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm outline-none bg-white"
+                                                >
+                                                    <option>Individual</option>
+                                                    <option>KYB Corporate</option>
+                                                    <option>Trust / Foundation</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-700 mb-1">Jurisdiction</label>
+                                                <select
+                                                    value={newApplicant.country}
+                                                    onChange={e => setNewApplicant({ ...newApplicant, country: e.target.value })}
+                                                    className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm outline-none bg-white"
+                                                >
+                                                    <option value="Kenya">Kenya (Low Risk)</option>
+                                                    <option value="Uganda">Uganda (Low Risk)</option>
+                                                    <option value="UAE">UAE (Elevated Cross-Border)</option>
+                                                    <option value="Offshore BVI">Offshore BVI (High Risk)</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-700 mb-1">Expected Monthly Volume (KES)</label>
+                                                <input
+                                                    type="number"
+                                                    value={newApplicant.amount}
+                                                    onChange={e => setNewApplicant({ ...newApplicant, amount: e.target.value })}
+                                                    placeholder="e.g. 1500000"
+                                                    className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm outline-none focus:border-navy-900"
+                                                />
+                                            </div>
+                                            <button type="submit" className="w-full bg-navy-900 hover:bg-navy-800 text-gold-500 font-bold py-3 rounded-lg text-sm transition">
+                                                Verify & Score Applicant
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    {/* Onboarding Queue Table */}
+                                    <div className="lg:col-span-8 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                                        <div className="p-6 border-b border-slate-200 flex justify-between items-center">
+                                            <h3 className="font-heading font-bold text-navy-900">Recent KYC / KYB Onboarding Decisions</h3>
+                                            <span className="text-xs font-mono text-slate-500">{kycList.length} Records</span>
+                                        </div>
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full text-left text-sm">
+                                                <thead className="bg-slate-50 text-xs uppercase text-slate-500 border-b border-slate-200">
+                                                    <tr>
+                                                        <th className="px-5 py-3">ID</th>
+                                                        <th className="px-5 py-3">Applicant</th>
+                                                        <th className="px-5 py-3">PEP / Sanctions</th>
+                                                        <th className="px-5 py-3">AML Score</th>
+                                                        <th className="px-5 py-3">Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-slate-100">
+                                                    {kycList.map(item => (
+                                                        <tr key={item.id} className="hover:bg-slate-50">
+                                                            <td className="px-5 py-3.5 font-mono text-xs font-semibold text-navy-900">{item.id}</td>
+                                                            <td className="px-5 py-3.5">
+                                                                <p className="font-semibold text-slate-800">{item.name}</p>
+                                                                <p className="text-xs text-slate-500">{item.type} • {item.country}</p>
+                                                            </td>
+                                                            <td className="px-5 py-3.5 text-xs">{item.pep}</td>
+                                                            <td className="px-5 py-3.5">
+                                                                <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                                                                    item.risk === 'HIGH' ? 'bg-rose-100 text-rose-700' :
+                                                                    item.risk === 'MEDIUM' ? 'bg-amber-100 text-amber-700' :
+                                                                    'bg-emerald-100 text-emerald-700'
+                                                                }`}>
+                                                                    {item.score} ({item.risk})
+                                                                </span>
+                                                            </td>
+                                                            <td className="px-5 py-3.5 text-xs font-semibold">{item.status}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* VIEW 3: TRANSACTION MONITORING */}
+                            {activeView === 'monitoring' && (
+                                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                                    <div className="p-6 border-b border-slate-200 flex flex-wrap items-center justify-between gap-4">
+                                        <div>
+                                            <h3 className="font-heading font-bold text-navy-900">Real-Time Transaction Monitoring Stream</h3>
+                                            <p className="text-xs text-slate-500">Live payment screening against AML typologies and velocity rules</p>
+                                        </div>
+                                        <div className="flex space-x-2">
+                                            {['ALL', 'BLOCKED', 'FLAGGED', 'CLEARED'].map(status => (
+                                                <button
+                                                    key={status}
+                                                    onClick={() => setTxFilter(status)}
+                                                    className={`px-3 py-1.5 rounded-md text-xs font-bold transition ${
+                                                        txFilter === status ? 'bg-navy-900 text-gold-500' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                                    }`}
+                                                >
+                                                    {status}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left text-sm">
+                                            <thead className="bg-slate-50 text-xs uppercase text-slate-500 border-b border-slate-200">
+                                                <tr>
+                                                    <th className="px-6 py-3">Tx ID</th>
+                                                    <th className="px-6 py-3">Originator / Beneficiary</th>
+                                                    <th className="px-6 py-3">Amount</th>
+                                                    <th className="px-6 py-3">Rule Triggered</th>
+                                                    <th className="px-6 py-3">Risk Score</th>
+                                                    <th className="px-6 py-3">Disposition</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-100">
+                                                {txList
+                                                    .filter(tx => txFilter === 'ALL' || tx.action === txFilter)
+                                                    .map(tx => (
+                                                        <tr key={tx.id} className="hover:bg-slate-50">
+                                                            <td className="px-6 py-4 font-mono text-xs font-bold text-navy-900">
+                                                                {tx.id}
+                                                                <span className="block text-[11px] font-normal text-slate-400">{tx.time}</span>
+                                                            </td>
+                                                            <td className="px-6 py-4">
+                                                                <p className="font-semibold text-slate-800">{tx.entity}</p>
+                                                                <p className="text-xs text-slate-500">{tx.channel}</p>
+                                                            </td>
+                                                            <td className="px-6 py-4 font-mono font-semibold text-navy-900">{tx.amount}</td>
+                                                            <td className="px-6 py-4 text-xs text-slate-700">{tx.rule}</td>
+                                                            <td className="px-6 py-4 font-mono text-xs font-bold">{tx.score}/100</td>
+                                                            <td className="px-6 py-4">
+                                                                <span className={`px-2.5 py-1 rounded text-xs font-bold ${
+                                                                    tx.action === 'BLOCKED' ? 'bg-rose-100 text-rose-700' :
+                                                                    tx.action === 'FLAGGED' ? 'bg-amber-100 text-amber-800' :
+                                                                    'bg-emerald-100 text-emerald-700'
+                                                                }`}>
+                                                                    {tx.action}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* VIEW 4: CASE MANAGEMENT */}
+                            {activeView === 'cases' && (
+                                <div className="grid lg:grid-cols-12 gap-6">
+                                    {/* Case List */}
+                                    <div className="lg:col-span-5 space-y-3">
+                                        {cases.map(c => (
+                                            <div
+                                                key={c.id}
+                                                onClick={() => setSelectedCase(c)}
+                                                className={`p-5 rounded-xl border cursor-pointer transition ${
+                                                    selectedCase.id === c.id
+                                                        ? 'bg-navy-900 text-white border-navy-900 shadow-md'
+                                                        : 'bg-white text-slate-800 border-slate-200 hover:border-navy-700'
+                                                }`}
+                                            >
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <span className={`font-mono text-xs font-bold ${selectedCase.id === c.id ? 'text-gold-500' : 'text-navy-900'}`}>
+                                                        {c.id}
+                                                    </span>
+                                                    <span className="text-xs px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold">
+                                                        {c.priority}
+                                                    </span>
+                                                </div>
+                                                <h4 className="font-heading font-bold text-base">{c.subject}</h4>
+                                                <p className={`text-xs mt-1 ${selectedCase.id === c.id ? 'text-slate-300' : 'text-slate-500'}`}>
+                                                    {c.trigger}
+                                                </p>
+                                                <div className="mt-3 pt-3 border-t border-slate-700/30 flex justify-between text-xs">
+                                                    <span>Analyst: {c.analyst}</span>
+                                                    <span>{c.status}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Case Investigation Workbench */}
+                                    <div className="lg:col-span-7 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                        <div className="flex flex-wrap justify-between items-start border-b border-slate-200 pb-4 mb-5 gap-4">
+                                            <div>
+                                                <span className="font-mono text-xs text-gold-600 font-bold">{selectedCase.id}</span>
+                                                <h3 className="font-heading text-2xl font-bold text-navy-900">{selectedCase.subject}</h3>
+                                                <p className="text-xs text-slate-500 mt-0.5">Assigned Investigator: {selectedCase.analyst} • SLA: {selectedCase.sla}</p>
+                                            </div>
+                                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-navy-900 text-gold-500">
+                                                {selectedCase.status}
+                                            </span>
+                                        </div>
+
+                                        <div className="space-y-4 mb-6">
+                                            <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                                <h4 className="text-xs font-bold uppercase text-slate-500 mb-1">Alert Trigger Summary</h4>
+                                                <p className="text-sm font-semibold text-navy-900">{selectedCase.trigger}</p>
+                                            </div>
+                                            <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                                <h4 className="text-xs font-bold uppercase text-slate-500 mb-1">Forensic Investigator Notes</h4>
+                                                <p className="text-sm text-slate-700 leading-relaxed">{selectedCase.notes}</p>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <h4 className="text-xs font-bold uppercase text-slate-500 mb-3">Update Case Disposition</h4>
+                                            <div className="flex flex-wrap gap-3">
+                                                <button
+                                                    onClick={() => updateCaseStatus(selectedCase.id, 'Escalated for STR Filing')}
+                                                    className="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg transition"
+                                                >
+                                                    Escalate to STR Filing
+                                                </button>
+                                                <button
+                                                    onClick={() => updateCaseStatus(selectedCase.id, 'EDD Requested')}
+                                                    className="bg-navy-900 hover:bg-navy-800 text-gold-500 text-xs font-bold px-4 py-2.5 rounded-lg transition"
+                                                >
+                                                    Request Client EDD
+                                                </button>
+                                                <button
+                                                    onClick={() => updateCaseStatus(selectedCase.id, 'Closed - False Positive')}
+                                                    className="bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold px-4 py-2.5 rounded-lg transition"
+                                                >
+                                                    Close as False Positive
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* VIEW 5: REGULATORY REPORTING */}
+                            {activeView === 'reporting' && (
+                                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                                    <div className="p-6 border-b border-slate-200 flex flex-wrap items-center justify-between gap-4">
+                                        <div>
+                                            <h3 className="font-heading font-bold text-navy-900">Statutory FIU & Regulatory Filings (STR / CTR)</h3>
+                                            <p className="text-xs text-slate-500">Automated goAML XML schema generation and Financial Reporting Centre submission log</p>
+                                        </div>
+                                        <span className="font-mono text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-md font-semibold">
+                                            goAML Schema v5.0 Validated
+                                        </span>
+                                    </div>
+
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left text-sm">
+                                            <thead className="bg-slate-50 text-xs uppercase text-slate-500 border-b border-slate-200">
+                                                <tr>
+                                                    <th className="px-6 py-3">Filing ID</th>
+                                                    <th className="px-6 py-3">Report Type</th>
+                                                    <th className="px-6 py-3">Subject Entity</th>
+                                                    <th className="px-6 py-3">Regulator</th>
+                                                    <th className="px-6 py-3">Status</th>
+                                                    <th className="px-6 py-3">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-100">
+                                                {reports.map(rep => (
+                                                    <tr key={rep.id} className="hover:bg-slate-50">
+                                                        <td className="px-6 py-4 font-mono text-xs font-bold text-navy-900">
+                                                            {rep.id}
+                                                            <span className="block text-[11px] font-normal text-slate-400">{rep.date}</span>
+                                                        </td>
+                                                        <td className="px-6 py-4 font-semibold text-slate-800">{rep.type}</td>
+                                                        <td className="px-6 py-4 text-xs text-slate-700">{rep.subject}</td>
+                                                        <td className="px-6 py-4 text-xs font-mono">{rep.regulator}</td>
+                                                        <td className="px-6 py-4">
+                                                            <span className={`px-2.5 py-1 rounded text-xs font-bold ${
+                                                                rep.status === 'Ready for Filing'
+                                                                    ? 'bg-amber-100 text-amber-800'
+                                                                    : 'bg-emerald-100 text-emerald-700'
+                                                            }`}>
+                                                                {rep.status}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-6 py-4">
+                                                            {rep.status === 'Ready for Filing' ? (
+                                                                <button
+                                                                    onClick={() => submitReport(rep.id)}
+                                                                    className="bg-navy-900 hover:bg-navy-800 text-gold-500 text-xs font-bold px-3.5 py-1.5 rounded transition"
+                                                                >
+                                                                    Transmit XML
+                                                                </button>
+                                                            ) : (
+                                                                <span className="text-xs text-slate-400 font-mono">Receipt Archived</span>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                        </div>
+                    </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
