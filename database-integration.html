@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostgreSQL & Prisma Data Architecture | Brightside Ripple Advisory</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            950: '#060F1E',
+                            900: '#0A192F',
+                            800: '#112240',
+                            700: '#1D3557',
+                        },
+                        gold: {
+                            500: '#D4AF37',
+                            600: '#B5952F',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .db-grid {
+            background-color: #0A192F;
+            background-image: radial-gradient(rgba(212, 175, 55, 0.14) 1px, transparent 1px);
+            background-size: 26px 26px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-gold-500 selection:text-navy-900">
+
+    <!-- Navigation Bar -->
+    <header class="fixed w-full top-0 z-50 bg-navy-950/95 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="#" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gold-500 rounded-lg flex items-center justify-center text-navy-950 font-heading font-extrabold text-xl">
+                        BR
+                    </div>
+                    <div>
+                        <span class="font-heading font-bold text-white text-lg tracking-tight block leading-none">BRIGHTSIDE RIPPLE</span>
+                        <span class="text-xs text-gold-500 tracking-widest uppercase font-medium">Data Persistence & Governance</span>
+                    </div>
+                </a>
+
+                <nav class="hidden md:flex space-x-8 items-center">
+                    <a href="#entities" class="text-slate-300 hover:text-gold-500 text-sm font-medium transition">Core Data Models</a>
+                    <a href="#prisma-explorer" class="text-slate-300 hover:text-gold-500 text-sm font-medium transition">Prisma Schema Explorer</a>
+                    <a href="#security" class="text-slate-300 hover:text-gold-500 text-sm font-medium transition">Security & Immutability</a>
+                    <a href="#contact" class="bg-gold-500 hover:bg-gold-600 text-navy-950 font-semibold px-5 py-2.5 rounded-md text-sm transition">
+                        Schedule Database Review
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="db-grid pt-32 pb-20 lg:pt-40 lg:pb-28 text-white border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7">
+                    <div class="inline-flex items-center space-x-2 bg-navy-800 border border-slate-700 rounded-full px-4 py-1.5 mb-6">
+                        <i class="fas fa-database text-gold-500 text-xs"></i>
+                        <span class="text-xs font-mono text-slate-300">POSTGRESQL 16 • PRISMA ORM • ACID COMPLIANT</span>
+                    </div>
+                    <h1 class="font-heading text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-6">
+                        Database Integration for <br>
+                        <span class="text-gold-500">Persistent & Auditable Compliance</span>
+                    </h1>
+                    <p class="text-lg text-slate-300 mb-8 leading-relaxed">
+                        Enterprise relational data architecture powered by <strong class="text-white">PostgreSQL</strong> and <strong class="text-white">Prisma ORM</strong>. Engineered for type-safe persistence, zero-data-loss ACID transactions, and tamper-evident storage across customers, transactions, AML alerts, investigations, and regulatory audit trails.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#prisma-explorer" class="bg-gold-500 hover:bg-gold-600 text-navy-950 font-bold px-7 py-3.5 rounded-md transition shadow-lg">
+                            Inspect Prisma Schema
+                        </a>
+                        <a href="#entities" class="border border-slate-600 hover:border-white text-white font-semibold px-7 py-3.5 rounded-md transition">
+                            View Relational Entities
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Live Database Telemetry Panel -->
+                <div class="lg:col-span-5">
+                    <div class="bg-navy-950 border border-slate-800 rounded-xl p-6 shadow-2xl font-mono text-xs">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+                            <span class="text-slate-400">POSTGRES_CLUSTER_PRIMARY</span>
+                            <span class="px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">CONNECTED • TLS 1.3</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300">public."Customer"</span>
+                                <span class="text-sky-400">Encrypted PII • Indexed</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300">public."Transaction"</span>
+                                <span class="text-sky-400">Partitioned • ACID</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300">public."Alert"</span>
+                                <span class="text-sky-400">Rule-Linked • FK Strict</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300">public."Investigation"</span>
+                                <span class="text-sky-400">RBAC • Versioned</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-300">public."AuditRecord"</span>
+                                <span class="text-gold-500">APPEND-ONLY • SHA-256</span>
+                            </div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800 text-slate-400 flex justify-between">
+                            <span>Prisma Client: <strong class="text-white">v5.20+</strong></span>
+                            <span>RPO / PITR: <strong class="text-emerald-400">&lt; 5 Seconds</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Five Relational Core Entities -->
+    <section id="entities" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-gold-600 font-bold tracking-wider uppercase text-sm">Relational Data Model</span>
+                <h2 class="font-heading text-3xl sm:text-4xl font-bold text-navy-900 mt-2 mb-4">Five Core Persistent Storage Domains</h2>
+                <p class="text-slate-600 text-lg">
+                    Strict foreign-key integrity, composite indexing, and JSONB metadata columns built to satisfy Central Bank and Financial Intelligence Unit record-keeping mandates.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Entity 1: Customers -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-7 hover:shadow-lg transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-11 h-11 bg-navy-900 text-gold-500 rounded-lg flex items-center justify-center text-lg">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <span class="font-mono text-xs bg-slate-200 text-slate-700 px-2.5 py-1 rounded">TABLE: Customer</span>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold text-navy-900 mb-2">Customers & KYC Profiles</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        Stores verified individual and corporate identities, beneficial ownership structures, PEP/sanctions statuses, and dynamic AML risk ratings.
+                    </p>
+                    <ul class="space-y-1.5 text-xs text-slate-700 font-mono">
+                        <li>• id: UUID @id @default(uuid())</li>
+                        <li>• nationalIdHash: String @unique</li>
+                        <li>• kycTier / amlRiskScore: Int</li>
+                        <li>• eddRequired: Boolean</li>
+                    </ul>
+                </div>
+
+                <!-- Entity 2: Transactions -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-7 hover:shadow-lg transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-11 h-11 bg-navy-900 text-gold-500 rounded-lg flex items-center justify-center text-lg">
+                            <i class="fas fa-arrow-right-arrow-left"></i>
+                        </div>
+                        <span class="font-mono text-xs bg-slate-200 text-slate-700 px-2.5 py-1 rounded">TABLE: Transaction</span>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold text-navy-900 mb-2">Financial Transactions</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        High-throughput ledger records capturing payment amounts in Decimal precision, channels, counterparty details, and real-time fraud scores.
+                    </p>
+                    <ul class="space-y-1.5 text-xs text-slate-700 font-mono">
+                        <li>• id: UUID @id @default(uuid())</li>
+                        <li>• amount: Decimal(18, 2)</li>
+                        <li>• channel / currency: String</li>
+                        <li>• decisionStatus: Enum (ALLOW/BLOCK)</li>
+                    </ul>
+                </div>
+
+                <!-- Entity 3: Alerts -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-7 hover:shadow-lg transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-11 h-11 bg-navy-900 text-gold-500 rounded-lg flex items-center justify-center text-lg">
+                            <i class="fas fa-triangle-exclamation"></i>
+                        </div>
+                        <span class="font-mono text-xs bg-slate-200 text-slate-700 px-2.5 py-1 rounded">TABLE: Alert</span>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold text-navy-900 mb-2">AML & Fraud Alerts</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        Links suspicious transactions and behavioral anomalies to specific rule codes, severity weights, and deduplicated alert queues.
+                    </p>
+                    <ul class="space-y-1.5 text-xs text-slate-700 font-mono">
+                        <li>• id: UUID @id @default(uuid())</li>
+                        <li>• ruleCode: String (Indexed)</li>
+                        <li>• severity: Enum (LOW..CRITICAL)</li>
+                        <li>• ruleSnapshot: Json</li>
+                    </ul>
+                </div>
+
+                <!-- Entity 4: Investigations -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-7 hover:shadow-lg transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-11 h-11 bg-navy-900 text-gold-500 rounded-lg flex items-center justify-center text-lg">
+                            <i class="fas fa-magnifying-glass-chart"></i>
+                        </div>
+                        <span class="font-mono text-xs bg-slate-200 text-slate-700 px-2.5 py-1 rounded">TABLE: Investigation</span>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold text-navy-900 mb-2">Forensic Investigations</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        Tracks analyst assignments, SLA deadlines, documentary evidence attachments, MLRO sign-offs, and STR/CTR regulatory filing references.
+                    </p>
+                    <ul class="space-y-1.5 text-xs text-slate-700 font-mono">
+                        <li>• caseNumber: String @unique</li>
+                        <li>• assignedAnalystId: String</li>
+                        <li>• disposition: Enum</li>
+                        <li>• strFilingRef: String?</li>
+                    </ul>
+                </div>
+
+                <!-- Entity 5: Audit Records -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-7 hover:shadow-lg transition md:col-span-2 lg:col-span-2">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-11 h-11 bg-navy-900 text-gold-500 rounded-lg flex items-center justify-center text-lg">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
+                        <span class="font-mono text-xs bg-gold-500/20 text-navy-900 font-bold px-2.5 py-1 rounded">IMMUTABLE TABLE: AuditRecord</span>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold text-navy-900 mb-2">Cryptographic Audit Records</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        Append-only compliance ledger recording every state mutation, risk score override, analyst note, and regulatory export—complete with actor ID, IP address, before/after JSON diffs, and SHA-256 integrity hashes.
+                    </p>
+                    <div class="grid sm:grid-cols-2 gap-2 text-xs text-slate-700 font-mono">
+                        <div>• actorId & actorRole: String</div>
+                        <div>• entityType & entityId: String</div>
+                        <div>• previousState / newState: Json</div>
+                        <div>• integrityHash: String (SHA-256 Chain)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Prisma Schema & Query Explorer -->
+    <section id="prisma-explorer" class="py-24 bg-navy-950 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-12">
+                <span class="text-gold-500 font-bold tracking-wider uppercase text-sm">schema.prisma & TypeScript ORM</span>
+                <h2 class="font-heading text-3xl sm:text-4xl font-bold mt-2">Interactive Prisma Model & Query Inspector</h2>
+                <p class="text-slate-400 mt-2 max-w-2xl">
+                    Select any database model below to inspect its exact <code class="text-gold-500">schema.prisma</code> definition alongside type-safe Prisma Client transactional queries.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-8">
+                <!-- Model Tabs -->
+                <div class="lg:col-span-4 space-y-2.5">
+                    <button onclick="selectModel('customer')" id="tab-customer" class="model-tab w-full text-left p-4 rounded-xl border border-gold-500 bg-navy-800 transition">
+                        <span class="font-mono text-xs text-gold-500 block">model Customer</span>
+                        <span class="text-sm font-semibold text-white">KYC Profiles, Risk Scores & Relations</span>
+                    </button>
+
+                    <button onclick="selectModel('transaction')" id="tab-transaction" class="model-tab w-full text-left p-4 rounded-xl border border-slate-800 bg-navy-900 hover:border-slate-600 transition">
+                        <span class="font-mono text-xs text-sky-400 block">model Transaction</span>
+                        <span class="text-sm font-semibold text-white">Decimal Ledger & Screening Decisions</span>
+                    </button>
+
+                    <button onclick="selectModel('alert')" id="tab-alert" class="model-tab w-full text-left p-4 rounded-xl border border-slate-800 bg-navy-900 hover:border-slate-600 transition">
+                        <span class="font-mono text-xs text-amber-400 block">model Alert</span>
+                        <span class="text-sm font-semibold text-white">Rule Triggers & Severity Indexing</span>
+                    </button>
+
+                    <button onclick="selectModel('investigation')" id="tab-investigation" class="model-tab w-full text-left p-4 rounded-xl border border-slate-800 bg-navy-900 hover:border-slate-600 transition">
+                        <span class="font-mono text-xs text-rose-400 block">model Investigation</span>
+                        <span class="text-sm font-semibold text-white">Case Workflow, SLA & STR Linking</span>
+                    </button>
+
+                    <button onclick="selectModel('audit')" id="tab-audit" class="model-tab w-full text-left p-4 rounded-xl border border-slate-800 bg-navy-900 hover:border-slate-600 transition">
+                        <span class="font-mono text-xs text-emerald-400 block">model AuditRecord</span>
+                        <span class="text-sm font-semibold text-white">Tamper-Evident Forensic Audit Log</span>
+                    </button>
+                </div>
+
+                <!-- Code Display Panels -->
+                <div class="lg:col-span-8 bg-navy-900 border border-slate-800 rounded-xl overflow-hidden">
+                    <div class="bg-navy-800 px-6 py-3.5 border-b border-slate-700 flex justify-between items-center">
+                        <span id="code-title" class="font-mono text-xs text-gold-500 font-bold">prisma/schema.prisma — Customer Model</span>
+                        <button onclick="copyPrismaCode()" class="text-xs bg-navy-950 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded border border-slate-700 transition">
+                            <i class="fas fa-copy mr-1.5"></i> <span id="copy-label">Copy Code</span>
+                        </button>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-800">
+                        <!-- Schema Definition -->
+                        <div class="p-5">
+                            <span class="block font-mono text-[11px] uppercase text-slate-400 mb-3">1. Prisma Schema Definition</span>
+                            <pre id="schema-code" class="font-mono text-xs text-sky-300 overflow-x-auto leading-relaxed"></pre>
+                        </div>
+
+                        <!-- Type-Safe Query Implementation -->
+                        <div class="p-5 bg-navy-950/60">
+                            <span class="block font-mono text-[11px] uppercase text-slate-400 mb-3">2. ACID Transaction / Query</span>
+                            <pre id="query-code" class="font-mono text-xs text-emerald-300 overflow-x-auto leading-relaxed"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security, Retention & Backup Governance -->
+    <section id="security" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mb-14">
+                <span class="text-gold-600 font-bold tracking-wider uppercase text-sm">Enterprise Database Hardening</span>
+                <h2 class="font-heading text-3xl sm:text-4xl font-bold text-navy-900 mt-2 mb-4">
+                    Built for Statutory Retention & Zero-Trust Security
+                </h2>
+                <p class="text-slate-600 text-lg">
+                    Financial crime and AML regulations mandate multi-year record preservation (7+ years under POCAMLA / CBK guidelines) with strict confidentiality controls.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-7 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="w-12 h-12 rounded-lg bg-navy-900 text-gold-500 flex items-center justify-center text-xl mb-5">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3 class="font-heading text-lg font-bold text-navy-900 mb-2">Field-Level PII Encryption</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Sensitive identifiers (National IDs, passport numbers, account numbers) are encrypted via AES-256-GCM before database insertion while preserving deterministic HMAC hashes for exact-match indexing.
+                    </p>
+                </div>
+
+                <div class="p-7 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="w-12 h-12 rounded-lg bg-navy-900 text-gold-500 flex items-center justify-center text-xl mb-5">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <h3 class="font-heading text-lg font-bold text-navy-900 mb-2">Atomic Prisma Transactions</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Every alert escalation, case disposition change, and audit log entry executes inside a single <code>prisma.$transaction()</code> block—guaranteeing no compliance action occurs without an audit record.
+                    </p>
+                </div>
+
+                <div class="p-7 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="w-12 h-12 rounded-lg bg-navy-900 text-gold-500 flex items-center justify-center text-xl mb-5">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3 class="font-heading text-lg font-bold text-navy-900 mb-2">Point-in-Time Recovery (PITR)</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Continuous Write-Ahead Log (WAL) archiving with automated encrypted snapshots ensures full disaster recovery and 7-year statutory archival compliance.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Consultation CTA Banner -->
+    <section id="contact" class="py-16 bg-navy-900 text-white border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div>
+                <h2 class="font-heading text-2xl sm:text-3xl font-bold">Need a Secure PostgreSQL & Prisma Compliance Architecture?</h2>
+                <p class="text-slate-300 mt-2 text-sm sm:text-base">
+                    Connect with our Data Engineering & Financial Crime Advisory team to deploy or audit your persistence layer.
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-4 shrink-0">
+                <a href="https://wa.me/254700276089" target="_blank" class="bg-gold-500 hover:bg-gold-600 text-navy-950 font-bold px-6 py-3.5 rounded-lg text-sm transition">
+                    <i class="fab fa-whatsapp mr-2"></i> Discuss on WhatsApp
+                </a>
+                <a href="tel:+254700276089" class="border border-slate-600 hover:border-white text-white font-semibold px-6 py-3.5 rounded-lg text-sm transition">
+                    Call +254 700 276 089
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-navy-950 text-slate-400 py-8 border-t border-slate-800 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <span class="font-heading font-bold text-white text-sm">BRIGHTSIDE RIPPLE ADVISORY</span>
+            <span>&copy; 2026 All Rights Reserved. | PostgreSQL • Prisma ORM • FinCrime Governance</span>
+        </div>
+    </footer>
+
+    <!-- Interactive Prisma Schema Switcher Script -->
+    <script>
+        const prismaModels = {
+            customer: {
+                title: 'prisma/schema.prisma — Customer Model',
+                schema: `model Customer {
+  id              String        @id @default(uuid())
+  externalRef     String        @unique
+  fullName        String
+  entityType      EntityType    @default(INDIVIDUAL)
+  nationalIdHash  String        @unique
+  countryCode     String        @db.VarChar(3)
+  kycStatus       KycStatus     @default(PENDING)
+  amlRiskScore    Int           @default(0)
+  riskTier        RiskTier      @default(LOW)
+  isPep           Boolean       @default(false)
+  transactions    Transaction[]
+  alerts          Alert[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([riskTier, kycStatus])
+}`,
+                query: `// Upsert verified KYC customer & log audit trail
+const customer = await prisma.$transaction(async (tx) => {
+  const record = await tx.customer.upsert({
+    where: { nationalIdHash: hashedId },
+    update: { amlRiskScore: 24, kycStatus: 'VERIFIED' },
+    create: {
+      externalRef: 'CUST-2026-8841',
+      fullName: 'Amina Wanjiku',
+      nationalIdHash: hashedId,
+      countryCode: 'KEN',
+      kycStatus: 'VERIFIED',
+      amlRiskScore: 24
+    }
+  });
+
+  await tx.auditRecord.create({
+    data: {
+      actorId: 'SYSTEM_KYC_ENGINE',
+      entityType: 'Customer',
+      entityId: record.id,
+      action: 'KYC_VERIFIED',
+      integrityHash: computeSha256(record)
+    }
+  });
+
+  return record;
+});`
+            },
+            transaction: {
+                title: 'prisma/schema.prisma — Transaction Model',
+                schema: `model Transaction {
+  id              String         @id @default(uuid())
+  txReference     String         @unique
+  customerId      String
+  customer        Customer       @relation(fields: [customerId], references: [id])
+  amount          Decimal        @db.Decimal(18, 2)
+  currency        String         @default("KES")
+  channel         String
+  counterparty    String
+  fraudScore      Float          @default(0.0)
+  decision        TxDecision     @default(ALLOW)
+  alerts          Alert[]
+  processedAt     DateTime       @default(now())
+
+  @@index([customerId, processedAt])
+  @@index([decision])
+}`,
+                query: `// Persist screened transaction with Decimal accuracy
+const txRecord = await prisma.transaction.create({
+  data: {
+    txReference: 'TXN-9920144',
+    customerId: customer.id,
+    amount: new Prisma.Decimal('980000.00'),
+    currency: 'KES',
+    channel: 'RTGS_TRANSFER',
+    counterparty: 'ACC-00492811',
+    fraudScore: 0.79,
+    decision: 'CHALLENGE'
+  },
+  include: { customer: true }
+});`
+            },
+            alert: {
+                title: 'prisma/schema.prisma — Alert Model',
+                schema: `model Alert {
+  id              String         @id @default(uuid())
+  alertCode       String         @unique
+  customerId      String
+  customer        Customer       @relation(fields: [customerId], references: [id])
+  transactionId   String?
+  transaction     Transaction?   @relation(fields: [transactionId], references: [id])
+  ruleTriggered   String
+  severity        Severity       @default(MEDIUM)
+  status          AlertStatus    @default(OPEN)
+  ruleMetadata    Json
+  investigation   Investigation?
+  createdAt       DateTime       @default(now())
+
+  @@index([status, severity])
+}`,
+                query: `// Generate AML alert & auto-link to transaction
+const alert = await prisma.alert.create({
+  data: {
+    alertCode: 'ALT-2026-5501',
+    customerId: txRecord.customerId,
+    transactionId: txRecord.id,
+    ruleTriggered: 'RULE_04_STRUCTURING_KES',
+    severity: 'HIGH',
+    ruleMetadata: {
+      thresholdKes: 1000000,
+      observedAmount: 980000,
+      velocity1h: 4
+    }
+  }
+});`
+            },
+            investigation: {
+                title: 'prisma/schema.prisma — Investigation Model',
+                schema: `model Investigation {
+  id                String        @id @default(uuid())
+  caseNumber        String        @unique
+  alertId           String        @unique
+  alert             Alert         @relation(fields: [alertId], references: [id])
+  assignedAnalyst   String
+  status            CaseStatus    @default(IN_PROGRESS)
+  findingsSummary   String?       @db.Text
+  strFilingId       String?       @unique
+  slaDeadline       DateTime
+  closedAt          DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([status, slaDeadline])
+}`,
+                query: `// Escalate case & attach FIU STR filing reference
+const closedCase = await prisma.investigation.update({
+  where: { caseNumber: 'CASE-2026-0419' },
+  data: {
+    status: 'ESCALATED_STR',
+    findingsSummary: 'Confirmed structuring across 4 branches.',
+    strFilingId: 'STR-2026-1115-09',
+    closedAt: new Date()
+  }
+});`
+            },
+            audit: {
+                title: 'prisma/schema.prisma — AuditRecord Model',
+                schema: `model AuditRecord {
+  id              String    @id @default(uuid())
+  actorId         String
+  actorRole       String
+  entityType      String
+  entityId        String
+  action          String
+  previousState   Json?
+  newState        Json?
+  ipAddress       String?
+  integrityHash   String    @unique
+  recordedAt      DateTime  @default(now())
+
+  @@index([entityType, entityId])
+  @@index([recordedAt])
+}`,
+                query: `// Query chronological forensic audit trail for examiners
+const auditTrail = await prisma.auditRecord.findMany({
+  where: {
+    entityType: 'Investigation',
+    entityId: caseRecord.id
+  },
+  orderBy: { recordedAt: 'asc' }
+});`
+            }
+        };
+
+        let activeModelKey = 'customer';
+
+        function selectModel(key) {
+            activeModelKey = key;
+            const model = prismaModels[key];
+
+            document.querySelectorAll('.model-tab').forEach(tab => {
+                tab.classList.remove('border-gold-500', 'bg-navy-800');
+                tab.classList.add('border-slate-800', 'bg-navy-900');
+            });
+
+            const selectedTab = document.getElementById('tab-' + key);
+            selectedTab.classList.remove('border-slate-800', 'bg-navy-900');
+            selectedTab.classList.add('border-gold-500', 'bg-navy-800');
+
+            document.getElementById('code-title').textContent = model.title;
+            document.getElementById('schema-code').textContent = model.schema;
+            document.getElementById('query-code').textContent = model.query;
+        }
+
+        function copyPrismaCode() {
+            const model = prismaModels[activeModelKey];
+            const combined = `// ${model.title}\n\n${model.schema}\n\n${model.query}`;
+            navigator.clipboard.writeText(combined);
+            const label = document.getElementById('copy-label');
+            label.textContent = 'Copied!';
+            setTimeout(() => { label.textContent = 'Copy Code'; }, 2000);
+        }
+
+        // Load initial model on page load
+        selectModel('customer');
+    </script>
+</body>
+</html>
